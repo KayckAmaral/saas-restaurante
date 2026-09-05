@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy na VM via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 137.131.159.192
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/saas-restaurante
+            git pull origin main
+
+            if [ -f backend/package.json ]; then
+              cd backend
+              npm install --production
+              pm2 restart saas-backend || pm2 start server.js --name saas-backend
+              cd ..
+            fi
+
+            if [ -f frontend/package.json ]; then
+              cd frontend
+              npm install
+              npm run build
+              pm2 restart saas-frontend || pm2 start npm --name saas-frontend -- start
+              cd ..
+            fi
