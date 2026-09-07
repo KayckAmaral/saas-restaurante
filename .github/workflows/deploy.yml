@@ -15,6 +15,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
+
             cd ~/saas-restaurante
             git pull origin main
 
@@ -28,6 +30,7 @@ jobs:
             if [ -f frontend/package.json ]; then
               cd frontend
               npm install
+              export NODE_OPTIONS='--max-old-space-size=512'
               npm run build
               pm2 restart saas-frontend || pm2 start npm --name saas-frontend -- start
               cd ..
