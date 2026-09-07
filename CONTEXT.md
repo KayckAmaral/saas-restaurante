@@ -15,11 +15,23 @@
 
 ### Funcionalidades previstas (15 estórias de usuário)
 
-| Classificação | Função |
-|---|---|
-| Básica | Gerenciar Pessoa, Gerenciar Produtos e Insumos, Gerenciar Tipo de Produto, Gerenciar Marca |
-| Fundamental | Registrar Venda, Atualizar Estoque, Registrar Recebimento, Abrir Caixa, Fechar Caixa, Lançar uso de Insumo, Registrar Entrada de Insumo e Produto |
-| Saída (relatórios) | Relatório de Vendas, de Produtos, de Pessoas, Fluxo de Caixa |
+| Id | Função | Classificação | Complexidade | Filtros/Obs |
+|---|---|---|---|---|
+| 1 | Gerenciar Pessoa | Básica | BAIXA | — |
+| 2 | Gerenciar Produtos e Insumos | Básica | BAIXA | — |
+| 3 | Gerenciar Tipo de Produto | Básica | BAIXA | — |
+| 4 | Gerenciar Marca | Básica | BAIXA | — |
+| 5 | Registrar Venda | Fundamental | ALTA | — |
+| 6 | Atualizar Estoque | Fundamental | BAIXA | — |
+| 7 | Registrar Recebimento | Fundamental | MÉDIA | — |
+| 8 | Abrir Caixa | Fundamental | BAIXA | — |
+| 9 | Fechar Caixa | Fundamental | BAIXA | — |
+| 10 | Lançar uso de Insumo | Fundamental | MÉDIA | — |
+| 11 | Registrar Entrada de Insumo e Produto | Fundamental | MÉDIA | — |
+| 12 | Relatório de Vendas | Saída | BAIXA | Filtros: Período, Pessoa |
+| 13 | Relatório de Produtos | Saída | MUITO ALTA | Filtros: +Vendidos, -Vendidos, Período, Próximo ao Vencimento, Marca, Tipo, Uso (Insumo ou Venda) |
+| 14 | Relatório de Pessoas | Saída | BAIXA | Filtros: Período, Em Débito |
+| 15 | Fluxo de Caixa | Saída | BAIXA | Filtros: Período |
 
 ### Status atual de implementação
 
