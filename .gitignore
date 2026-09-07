@@ -22,3 +22,5 @@ out/
 
 # Automação de testes (Playwright MCP)
 .playwright-mcp/
+
+**/package-lock.json
