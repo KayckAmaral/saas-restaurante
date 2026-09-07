@@ -1,0 +1,134 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SaaS Restaurante API",
+    "description": "API REST - Sistema de Gestão do Restaurante J.P. Moreira Silva",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:5000" }],
+  "paths": {
+    "/autenticacao/token": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Gerar token de acesso (login)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/login" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Token gerado com sucesso" }, "401": { "description": "Login ou senha inválidos" } }
+      }
+    },
+    "/autenticacao/usuario": {
+      "get": {
+        "tags": ["Autenticação"],
+        "summary": "Retorna o usuário logado",
+        "security": [{ "jwt": [] }],
+        "responses": { "200": { "description": "Usuário logado" }, "401": { "description": "Não autenticado" } }
+      }
+    },
+    "/autenticacao/logout": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Logout — remove o cookie",
+        "responses": { "200": { "description": "Logout realizado" } }
+      }
+    },
+    "/pessoa-fisica": {
+      "get": {
+        "tags": ["Pessoa Física"],
+        "summary": "Lista todas as pessoas físicas",
+        "security": [{ "jwt": [] }],
+        "responses": { "200": { "description": "Lista retornada" }, "404": { "description": "Nenhuma encontrada" } }
+      },
+      "post": {
+        "tags": ["Pessoa Física"],
+        "summary": "Cadastra uma nova pessoa física",
+        "security": [{ "jwt": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/pessoaFisica" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Cadastrada com sucesso" }, "400": { "description": "Dados inválidos" } }
+      },
+      "put": {
+        "tags": ["Pessoa Física"],
+        "summary": "Atualiza uma pessoa física",
+        "security": [{ "jwt": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/pessoaFisicaAtualizar" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Atualizada com sucesso" }, "404": { "description": "Não encontrada" } }
+      }
+    },
+    "/pessoa-fisica/{id}": {
+      "get": {
+        "tags": ["Pessoa Física"],
+        "summary": "Busca uma pessoa física por ID",
+        "security": [{ "jwt": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Encontrada" }, "404": { "description": "Não encontrada" } }
+      }
+    },
+    "/pessoa-fisica/{id}/inativar": {
+      "patch": {
+        "tags": ["Pessoa Física"],
+        "summary": "Inativa uma pessoa física (exclusão lógica)",
+        "security": [{ "jwt": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Inativada com sucesso" }, "404": { "description": "Não encontrada" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "login": {
+        "type": "object",
+        "properties": {
+          "login": { "type": "string", "example": "admin" },
+          "senha": { "type": "string", "example": "admin123" }
+        }
+      },
+      "pessoaFisica": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string", "example": "João Silva" },
+          "telefone": { "type": "string", "example": "(44) 99999-9999" },
+          "endereco": { "type": "string", "example": "Rua das Flores, 123" },
+          "cpf": { "type": "string", "example": "12345678900" },
+          "dataNascimento": { "type": "string", "example": "1990-01-15" },
+          "login": { "type": "string", "example": "joao.silva" },
+          "senha": { "type": "string", "example": "senha123" },
+          "idPessoaJuridica": { "type": "integer", "example": null }
+        }
+      },
+      "pessoaFisicaAtualizar": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "nome": { "type": "string", "example": "João Silva" },
+          "telefone": { "type": "string", "example": "(44) 99999-9999" },
+          "endereco": { "type": "string", "example": "Rua das Flores, 123" },
+          "cpf": { "type": "string", "example": "12345678900" },
+          "dataNascimento": { "type": "string", "example": "1990-01-15" },
+          "login": { "type": "string", "example": "joao.silva" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "jwt": { "type": "apiKey", "in": "cookie", "name": "token" }
+    }
+  }
+}
