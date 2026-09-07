@@ -25,6 +25,9 @@
 
 - ✅ Controle de acesso (login/logout via JWT + cookie httpOnly)
 - ✅ Gerenciar Pessoa Física (CRUD completo com exclusão lógica)
+- ✅ Frontend Next.js com login e dashboard funcionando em produção
+- ✅ Pipeline CI/CD (push → deploy automático na VM)
+- ✅ Swagger disponível via túnel SSH em `http://localhost:5000/docs`
 - ⏳ Gerenciar Marca (próxima)
 - ⏳ Gerenciar Tipo de Produto (próxima)
 - ⏳ Gerenciar Pessoa Jurídica (próxima)
@@ -55,8 +58,11 @@
 - **Tema:** escuro com laranja (`#e85d04`) como cor primária
 
 ### Proxy
-- **Nginx** na porta 80 fazendo reverse proxy → porta 3000 (frontend) e porta 5000 (backend via `/api`)
-- **Configuração atual:** ainda aponta tudo pra 5000 (precisa ajustar quando o frontend estiver estável)
+- **Nginx** na porta 80 fazendo reverse proxy
+- **Configuração atual** (`/etc/nginx/sites-enabled/default`):
+  - `location /` → porta 3000 (Next.js frontend)
+  - `location /api/` → porta 5000 (Express backend), rewrite remove o prefixo `/api`
+- **Importante:** o `apiClient.js` chama `http://localhost:5000/` diretamente (sem `/api`). O prefixo `/api` no Nginx é só pra acesso externo direto à API.
 
 ---
 
@@ -334,7 +340,26 @@ Edita no VS Code → git commit → git push → GitHub Actions → VM atualizad
 
 ---
 
-## 8. Variáveis de Ambiente
+## 8. Swagger — Como Acessar
+
+O Swagger está disponível em `http://localhost:5000/docs` mas a porta 5000 **não está aberta** externamente na OCI (só a 80 está).
+
+### Acesso via túnel SSH (recomendado — zero vulnerabilidade)
+Abre um terminal separado no seu PC e roda:
+```cmd
+ssh -i chave.key -L 5000:localhost:5000 ubuntu@137.131.159.192 -N
+```
+(ajusta o caminho da chave.key pro caminho correto no seu PC)
+
+Deixa esse terminal aberto e acessa `http://localhost:5000/docs` no navegador.
+Quando terminar, fecha o terminal — o túnel some automaticamente.
+
+### Por que não abrir a porta 5000 externamente?
+Expor o Swagger publicamente permite que qualquer pessoa veja e teste todos os endpoints. Em produção isso é um risco de segurança. O túnel SSH é privado e seguro.
+
+---
+
+## 9. Variáveis de Ambiente
 
 ### Backend (`backend/.env`)
 ```
@@ -348,16 +373,16 @@ PORT=5000
 VM_IP=137.131.159.192
 ```
 
-### Frontend — não tem `.env` ainda
-Quando precisar apontar pra produção, criar `frontend/.env.local`:
+### Frontend (`frontend/.env.local` — não commitar)
 ```
-NEXT_PUBLIC_API_URL=http://137.131.159.192:5000/
+NEXT_PUBLIC_API_URL=http://137.131.159.192/api/
 ```
-Em desenvolvimento local, o `apiClient.js` usa `http://localhost:5000/` por padrão.
+Em desenvolvimento local, troca pra `http://localhost:5000/`.
+**Importante:** o `.env.local` não vai pro GitHub — precisa recriar na VM manualmente após cada `git pull` que afete o frontend.
 
 ---
 
-## 9. Comandos Úteis na VM
+## 10. Comandos Úteis na VM
 
 ```bash
 # Ver processos rodando
@@ -387,7 +412,7 @@ mysql -h 137.131.181.176 -P 3306 -u kayck -p
 
 ---
 
-## 10. Decisões de Arquitetura Tomadas
+## 11. Decisões de Arquitetura Tomadas
 
 | Decisão | Escolha | Motivo |
 |---|---|---|
@@ -405,7 +430,7 @@ mysql -h 137.131.181.176 -P 3306 -u kayck -p
 
 ---
 
-## 11. Próximos Passos (ordem sugerida)
+## 12. Próximos Passos (ordem sugerida)
 
 1. **Gerenciar Marca** — entity + repository + controller + router (padrão simples, sem herança)
 2. **Gerenciar Tipo de Produto** — mesmo padrão da Marca
@@ -418,7 +443,7 @@ mysql -h 137.131.181.176 -P 3306 -u kayck -p
 
 ---
 
-## 12. Referências de Código
+## 13. Referências de Código
 
 - **Padrão do professor (backend):** pasta `pfs2/` do projeto de referência
 - **Padrão do professor (frontend):** pasta `revisao/frontend/` do projeto de referência
