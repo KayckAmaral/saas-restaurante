@@ -56,7 +56,7 @@ export default function AppShell({ children }) {
         <div style={styles.container}>
             <aside style={{ ...styles.sidebar, width: recolhida ? '76px' : '240px' }}>
 
-                <div style={styles.topo}>
+                <div style={{ ...styles.topo, flexDirection: recolhida ? 'column' : 'row' }}>
                     <div style={styles.marca}>
                         <UtensilsCrossed size={22} color="var(--primary)" style={{ flexShrink: 0 }} />
                         {!recolhida && <span style={styles.marcaTexto}>SaaS Restaurante</span>}
@@ -152,7 +152,8 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '18px 16px',
+        gap: '10px',
+        padding: '16px',
         borderBottom: '1px solid var(--border)',
         minHeight: '64px'
     },
