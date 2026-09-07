@@ -63,11 +63,13 @@
 ### Frontend
 - **Framework:** Next.js 15 + React 19
 - **Estilo:** CSS-in-JS inline (objeto `styles` no final de cada componente) — NÃO usar Tailwind, NÃO usar CSS modules
+- **Ícones:** `lucide-react` — NÃO usar emojis na interface
 - **Toast:** react-hot-toast
 - **HTTP:** `utils/apiClient.js` (classe estática com métodos get/post/put/patch/delete)
+- **Layout:** sidebar retrátil compartilhada (`components/AppShell.jsx`) via route group `app/(protegido)/`, envolvendo as páginas autenticadas (dashboard, marca, pessoa-fisica, pessoa-juridica); expandida por padrão, recolhida (mas sempre visível) nas telas com formulário
 - **Processo:** PM2 (`pm2 start npm --name saas-frontend -- start`)
 - **Porta:** 3000
-- **Tema:** escuro com laranja (`#e85d04`) como cor primária
+- **Tema:** claro/off-white com vermelho pastel (`#c96b6b`) como cor primária — alterado em 2026-09-07 (era escuro `#1a1a2e` + laranja `#e85d04`), decisão do desenvolvedor
 
 ### Proxy
 - **Nginx** na porta 80 fazendo reverse proxy
@@ -301,9 +303,19 @@ frontend/
 │   ├── layout.jsx             ← RootLayout com Toaster
 │   ├── page.jsx               ← redirect para /login
 │   ├── login/
-│   │   └── page.jsx           ← tela de login (já implementada)
-│   └── dashboard/
-│       └── page.jsx           ← dashboard com cards dos módulos (já implementado)
+│   │   └── page.jsx           ← tela de login (pública, sem sidebar)
+│   └── (protegido)/           ← route group (não afeta a URL) — envolvido por AppShell
+│       ├── layout.jsx         ← renderiza <AppShell>{children}</AppShell>
+│       ├── dashboard/
+│       │   └── page.jsx       ← dashboard com cards dos módulos
+│       ├── marca/
+│       │   └── page.jsx
+│       ├── pessoa-fisica/
+│       │   └── page.jsx
+│       └── pessoa-juridica/
+│           └── page.jsx
+├── components/
+│   └── AppShell.jsx           ← sidebar retrátil + navegação + logout (client component)
 └── utils/
     └── apiClient.js           ← classe estática com get/post/put/patch/delete
 ```
@@ -311,23 +323,31 @@ frontend/
 ### Convenções obrigatórias
 1. **`'use client'`** no topo de todo componente que usa hooks ou eventos
 2. **Sem Tailwind, sem CSS modules** — usar objeto `styles` inline no final do arquivo
-3. **Tema:** fundo escuro `#1a1a2e`, cor primária laranja `#e85d04`
-4. **ApiClient:** sempre usar a classe de `utils/apiClient.js`, nunca fetch direto
-5. **Toast:** usar `react-hot-toast` para feedback de sucesso/erro
-6. **Proteção de rota:** toda página autenticada deve chamar `ApiClient.get('autenticacao/usuario')` no `useEffect` e redirecionar pra `/login` se retornar null
-7. **`credentials: 'include'`** em todas as requisições (já está no ApiClient)
+3. **Tema:** fundo claro/off-white `#faf6f2`, cor primária vermelho pastel `#c96b6b`
+4. **Ícones:** `lucide-react` — proibido usar emojis na interface
+5. **ApiClient:** sempre usar a classe de `utils/apiClient.js`, nunca fetch direto
+6. **Toast:** usar `react-hot-toast` para feedback de sucesso/erro
+7. **Proteção de rota:** toda página autenticada deve chamar `ApiClient.get('autenticacao/usuario')` no `useEffect` e redirecionar pra `/login` se retornar null
+8. **`credentials: 'include'`** em todas as requisições (já está no ApiClient)
+9. **Páginas autenticadas novas** entram dentro de `app/(protegido)/` para herdar a sidebar automaticamente
 
 ### Variáveis CSS disponíveis (globals.css)
 ```css
---primary: #e85d04
---primary-dark: #c44d02
---secondary: #1a1a2e
---surface: #16213e
---text: #e0e0e0
---text-muted: #9e9e9e
---border: rgba(255,255,255,0.08)
+--bg: #faf6f2
+--surface: #ffffff
+--surface-alt: #f3eae3
+--border: #e8ddd3
+--text: #332e2a
+--text-muted: #8c8074
+--primary: #c96b6b
+--primary-dark: #b15656
+--primary-light: #f6dedd
+--danger: #b4483f          /* só para ações destrutivas (ex.: Inativar) */
+--danger-light: #f5e0dd
+--success: #6fae8c
+--success-light: #e2f0e9
 --radius: 12px
---shadow: 0 8px 32px rgba(0,0,0,0.4)
+--shadow: 0 8px 24px rgba(51,46,42,0.08)
 ```
 
 ---
@@ -434,6 +454,8 @@ mysql -h 137.131.181.176 -P 3306 -u kayck -p
 | Hash de senha | bcryptjs | Seguro, sem dependências nativas |
 | Exclusão | Lógica (ativo=false) | Requisito do TCC |
 | Estilo frontend | CSS inline (objeto styles) | Padrão do professor (revisao) |
+| Tema frontend | Claro + vermelho pastel, ícones lucide-react | Decisão do desenvolvedor em 2026-09-07, substituindo o tema escuro/laranja original |
+| Navegação frontend | Sidebar retrátil via layout `(protegido)` | Evitar duplicar topbar em cada página; recolhe automaticamente em telas com formulário |
 | Criação de Lote | Automática ao inserir IT_E | Evitar esquecimento manual |
 | MOV_CAIXA origem | XOR entre Venda e C_Receber | Integridade: toda movimentação tem origem rastreável |
 | Recebimento | Pode ser parcial | Requisito de negócio do restaurante |

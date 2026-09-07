@@ -5,24 +5,30 @@
 }
 
 :root {
-  --primary: #e85d04;
-  --primary-dark: #c44d02;
-  --primary-light: #ffd6b3;
-  --secondary: #1a1a2e;
-  --surface: #16213e;
-  --surface-light: #0f3460;
-  --text: #e0e0e0;
-  --text-muted: #9e9e9e;
-  --border: rgba(255,255,255,0.08);
-  --success: #4caf50;
-  --error: #f44336;
+  --bg: #faf6f2;
+  --surface: #ffffff;
+  --surface-alt: #f3eae3;
+  --border: #e8ddd3;
+  --text: #332e2a;
+  --text-muted: #8c8074;
+  --primary: #c96b6b;
+  --primary-dark: #b15656;
+  --primary-light: #f6dedd;
+  --danger: #b4483f;
+  --danger-light: #f5e0dd;
+  --success: #6fae8c;
+  --success-light: #e2f0e9;
   --radius: 12px;
-  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow: 0 8px 24px rgba(51, 46, 42, 0.08);
 }
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--secondary);
+  background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
