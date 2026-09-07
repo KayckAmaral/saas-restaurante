@@ -91,6 +91,60 @@
         "responses": { "200": { "description": "Inativada com sucesso" }, "404": { "description": "Não encontrada" } }
       }
     },
+    "/pessoa-juridica": {
+      "get": {
+        "tags": ["Pessoa Jurídica"],
+        "summary": "Lista todas as pessoas jurídicas",
+        "security": [{ "jwt": [] }],
+        "responses": { "200": { "description": "Lista retornada" }, "404": { "description": "Nenhuma encontrada" } }
+      },
+      "post": {
+        "tags": ["Pessoa Jurídica"],
+        "summary": "Cadastra uma nova pessoa jurídica",
+        "security": [{ "jwt": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/pessoaJuridica" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Cadastrada com sucesso" }, "400": { "description": "Dados inválidos" } }
+      },
+      "put": {
+        "tags": ["Pessoa Jurídica"],
+        "summary": "Atualiza uma pessoa jurídica",
+        "security": [{ "jwt": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/pessoaJuridicaAtualizar" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Atualizada com sucesso" }, "404": { "description": "Não encontrada" } }
+      }
+    },
+    "/pessoa-juridica/{id}": {
+      "get": {
+        "tags": ["Pessoa Jurídica"],
+        "summary": "Busca uma pessoa jurídica por ID",
+        "security": [{ "jwt": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Encontrada" }, "404": { "description": "Não encontrada" } }
+      }
+    },
+    "/pessoa-juridica/{id}/inativar": {
+      "patch": {
+        "tags": ["Pessoa Jurídica"],
+        "summary": "Inativa uma pessoa jurídica (exclusão lógica)",
+        "security": [{ "jwt": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Inativada com sucesso" }, "404": { "description": "Não encontrada" } }
+      }
+    },
     "/marca": {
       "get": {
         "tags": ["Marca"],
@@ -178,6 +232,27 @@
           "cpf": { "type": "string", "example": "12345678900" },
           "dataNascimento": { "type": "string", "example": "1990-01-15" },
           "login": { "type": "string", "example": "joao.silva" }
+        }
+      },
+      "pessoaJuridica": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string", "example": "Distribuidora ABC" },
+          "telefone": { "type": "string", "example": "(44) 3333-4444" },
+          "endereco": { "type": "string", "example": "Av. Central, 500" },
+          "cnpj": { "type": "string", "example": "12345678000199" },
+          "razaoSocial": { "type": "string", "example": "ABC Distribuidora de Alimentos LTDA" }
+        }
+      },
+      "pessoaJuridicaAtualizar": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "nome": { "type": "string", "example": "Distribuidora ABC" },
+          "telefone": { "type": "string", "example": "(44) 3333-4444" },
+          "endereco": { "type": "string", "example": "Av. Central, 500" },
+          "cnpj": { "type": "string", "example": "12345678000199" },
+          "razaoSocial": { "type": "string", "example": "ABC Distribuidora de Alimentos LTDA" }
         }
       },
       "marca": {

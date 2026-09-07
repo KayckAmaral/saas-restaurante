@@ -19,6 +19,7 @@ const outputFile = './swagger.json';
 const routes = [
     './routes/autenticacaoRouter.js',
     './routes/pessoaFisicaRouter.js',
+    './routes/pessoaJuridicaRouter.js',
     './routes/marcaRouter.js'
 ];
 

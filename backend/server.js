@@ -7,6 +7,7 @@ import { createRequire } from 'module';
 
 import autenticacaoRouter from './routes/autenticacaoRouter.js';
 import pessoaFisicaRouter from './routes/pessoaFisicaRouter.js';
+import pessoaJuridicaRouter from './routes/pessoaJuridicaRouter.js';
 import marcaRouter from './routes/marcaRouter.js';
 
 const require = createRequire(import.meta.url);
@@ -34,6 +35,7 @@ server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJson, {
 // ── Rotas ────────────────────────────────────────────────────────────────────
 server.use('/autenticacao', autenticacaoRouter);
 server.use('/pessoa-fisica', pessoaFisicaRouter);
+server.use('/pessoa-juridica', pessoaJuridicaRouter);
 server.use('/marca', marcaRouter);
 
 // ── Health check ─────────────────────────────────────────────────────────────

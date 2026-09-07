@@ -37,8 +37,8 @@ Ainda não existem: nenhuma tela de CRUD (nem para Pessoa Física, que já exist
 
 | Id | Função | Classificação | Complexidade | Backend | Frontend |
 |---|---|---|---|---|---|
-| 1 | Gerenciar Pessoa (Física) | Básica | BAIXA | ✅ | ⬜ |
-| 1b | Gerenciar Pessoa Jurídica | Básica | BAIXA | ⬜ | ⬜ |
+| 1 | Gerenciar Pessoa (Física) | Básica | BAIXA | ✅ | ✅ |
+| 1b | Gerenciar Pessoa Jurídica | Básica | BAIXA | ✅ | ✅ |
 | 2 | Gerenciar Produtos e Insumos | Básica | BAIXA | ⬜ | ⬜ |
 | 3 | Gerenciar Tipo de Produto | Básica | BAIXA | ⬜ | ⬜ |
 | 4 | Gerenciar Marca | Básica | BAIXA | ✅ | ✅ |
@@ -61,13 +61,13 @@ Ainda não existem: nenhuma tela de CRUD (nem para Pessoa Física, que já exist
 A ordem segue `CONTEXT.md` seção 12, do mais simples (sem dependências) ao mais complexo:
 
 ### Fase A — Cadastros básicos (sem dependências entre si)
-1. **Gerenciar Marca** — entity + repository + controller + router (backend) + tela CRUD (frontend)
+1. ~~**Gerenciar Marca**~~ ✅ concluído
 2. **Gerenciar Tipo de Produto** — mesmo padrão da Marca
-3. **Gerenciar Pessoa Jurídica** — herança de PESSOA (igual Pessoa Física), FK opcional para vincular pessoa física a uma jurídica
+3. ~~**Gerenciar Pessoa Jurídica**~~ ✅ concluído
 
 ### Fase B — Cadastros com dependência
 4. **Gerenciar Produtos e Insumos** — depende de Marca e Tipo de Produto (FKs fracas/FA)
-5. **Tela CRUD de Pessoa Física** — o backend já existe, falta só o frontend
+5. ~~**Tela CRUD de Pessoa Física**~~ ✅ concluído
 
 ### Fase C — Ajuste de infraestrutura
 6. **Ajustar Nginx** — rotear `/` → frontend (3000), `/api` → backend (5000) — necessário antes de expor mais funcionalidades publicamente
@@ -113,11 +113,16 @@ Frontend:
 |---|---|
 | 2026-09-07 | Levantamento do estado atual do projeto e criação deste arquivo de acompanhamento. Nenhum código novo ainda. |
 | 2026-09-07 | **Gerenciar Marca concluído.** Backend: `marcaEntity.js`, `marcaRepository.js`, `marcaController.js`, `marcaRouter.js` (CRUD + inativar), registrado em `server.js` e `swagger.js`, endpoints documentados em `swagger.json`. Frontend: tela `/marca` (listar, cadastrar, editar, inativar) com proteção de rota, card adicionado no dashboard. `npm run build` do frontend passou sem erros. Ainda não testado ponta a ponta contra o banco (sem ambiente local rodando). |
+| 2026-09-07 | **Gerenciar Pessoa Jurídica concluído (backend novo).** Criado `pessoaJuridicaEntity.js`, `pessoaJuridicaRepository.js` (herança de PESSOA, mesmo padrão de Pessoa Física: insere em PESSOA com `tipo='J'` + PESSOA_JURIDICA com mesma PK), `pessoaJuridicaController.js`, `pessoaJuridicaRouter.js`. Registrado em `server.js`/`swagger.js`, documentado em `swagger.json`. |
+| 2026-09-07 | **Tela de Pessoa Física concluída.** Criada `app/pessoa-fisica/page.jsx` (backend já existia): listar, cadastrar (com login/senha opcionais e vínculo opcional a uma pessoa jurídica via select), editar (sem alterar senha — endpoint de troca de senha não está exposto ainda), inativar. |
+| 2026-09-07 | **Tela de Pessoa Jurídica concluída.** Criada `app/pessoa-juridica/page.jsx`: listar, cadastrar, editar, inativar (nome, razão social, CNPJ, telefone, endereço). Dashboard atualizado: card único "Pessoas" trocado por dois cards — "Pessoa Física" (`/pessoa-fisica`) e "Pessoa Jurídica" (`/pessoa-juridica`). `npm run build` do frontend passou sem erros para as duas novas rotas. Ainda não testado ponta a ponta contra o banco. |
 
 ---
 
 ## 6. Próxima ação
 
-**Fase A, item 1 (Gerenciar Marca) concluída.** Próximo: **Fase A, item 2 — Gerenciar Tipo de Produto**, seguindo o mesmo padrão (entity/repository/controller/router + tela CRUD).
+Concluídos: **Gerenciar Marca**, **Gerenciar Pessoa Física** (frontend) e **Gerenciar Pessoa Jurídica** (backend + frontend). Próximo: **Fase A, item 2 — Gerenciar Tipo de Produto**, seguindo o mesmo padrão (entity/repository/controller/router + tela CRUD).
 
-> Pendente de validação: testar o fluxo de Marca de ponta a ponta (cadastrar/editar/inativar) contra o banco real, seja localmente com túnel/`.env` apontando para a OCI, seja após o próximo deploy.
+> Pendente de validação: testar os fluxos de Marca, Pessoa Física e Pessoa Jurídica de ponta a ponta (cadastrar/editar/inativar) contra o banco real, após o deploy em andamento. Atenção especial para:
+> - Constraint `UNIQUE` de CNPJ em `PESSOA_JURIDICA` (tratada como 409 no controller, mas não confirmada no schema real)
+> - O select de "empresa vinculada" na tela de Pessoa Física depende do endpoint `/pessoa-juridica` retornar dados
