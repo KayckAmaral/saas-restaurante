@@ -50,6 +50,10 @@ export default class MarcaController {
 
         } catch (ex) {
             console.error(ex);
+            // Trata erro de nome duplicado (unique constraint)
+            if (ex.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({ msg: 'Já existe uma marca com esse nome.' });
+            }
             return res.status(500).json({ msg: 'Erro ao cadastrar marca.' });
         }
     }
@@ -68,11 +72,19 @@ export default class MarcaController {
             }
 
             const entidade = new MarcaEntity(id, nome, existente.ativo);
+
+            if (!entidade.validar()) {
+                return res.status(400).json({ msg: 'O campo nome é obrigatório.' });
+            }
+
             await this.#repo.atualizar(entidade);
             return res.status(200).json({ msg: 'Marca atualizada com sucesso.' });
 
         } catch (ex) {
             console.error(ex);
+            if (ex.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({ msg: 'Já existe uma marca com esse nome.' });
+            }
             return res.status(500).json({ msg: 'Erro ao atualizar marca.' });
         }
     }
