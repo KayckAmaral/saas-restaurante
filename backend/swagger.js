@@ -18,7 +18,8 @@ const doc = {
 const outputFile = './swagger.json';
 const routes = [
     './routes/autenticacaoRouter.js',
-    './routes/pessoaFisicaRouter.js'
+    './routes/pessoaFisicaRouter.js',
+    './routes/marcaRouter.js'
 ];
 
 swaggerAutogen({ openapi: '3.0.0' })(outputFile, routes, doc);

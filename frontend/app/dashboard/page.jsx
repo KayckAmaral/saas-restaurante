@@ -66,7 +66,11 @@ export default function Dashboard() {
                 {/* Cards de módulos */}
                 <div style={styles.grid}>
                     {modulos.map((m, i) => (
-                        <div key={i} style={styles.card}>
+                        <div
+                            key={i}
+                            style={m.rota ? { ...styles.card, cursor: 'pointer' } : styles.card}
+                            onClick={() => m.rota && router.push(m.rota)}
+                        >
                             <div style={styles.cardIcon}>{m.icon}</div>
                             <h3 style={styles.cardTitle}>{m.titulo}</h3>
                             <p style={styles.cardDesc}>{m.desc}</p>
@@ -85,6 +89,7 @@ const modulos = [
     { icon: '💰', titulo: 'Caixa',           desc: 'Abra e feche o caixa diário',           badge: 'Em breve' },
     { icon: '👥', titulo: 'Pessoas',         desc: 'Clientes, colaboradores e empresas',    badge: 'Disponível' },
     { icon: '🏷️', titulo: 'Produtos',        desc: 'Gerencie produtos e insumos',           badge: 'Em breve' },
+    { icon: '🏭', titulo: 'Marca',           desc: 'Cadastre as marcas dos produtos',       badge: 'Disponível', rota: '/marca' },
     { icon: '📊', titulo: 'Relatórios',      desc: 'Vendas, estoque e fluxo de caixa',      badge: 'Em breve' },
 ];
 

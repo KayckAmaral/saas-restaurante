@@ -90,6 +90,60 @@
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
         "responses": { "200": { "description": "Inativada com sucesso" }, "404": { "description": "Não encontrada" } }
       }
+    },
+    "/marca": {
+      "get": {
+        "tags": ["Marca"],
+        "summary": "Lista todas as marcas",
+        "security": [{ "jwt": [] }],
+        "responses": { "200": { "description": "Lista retornada" }, "404": { "description": "Nenhuma encontrada" } }
+      },
+      "post": {
+        "tags": ["Marca"],
+        "summary": "Cadastra uma nova marca",
+        "security": [{ "jwt": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/marca" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Cadastrada com sucesso" }, "400": { "description": "Dados inválidos" } }
+      },
+      "put": {
+        "tags": ["Marca"],
+        "summary": "Atualiza uma marca",
+        "security": [{ "jwt": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/marcaAtualizar" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Atualizada com sucesso" }, "404": { "description": "Não encontrada" } }
+      }
+    },
+    "/marca/{id}": {
+      "get": {
+        "tags": ["Marca"],
+        "summary": "Busca uma marca por ID",
+        "security": [{ "jwt": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Encontrada" }, "404": { "description": "Não encontrada" } }
+      }
+    },
+    "/marca/{id}/inativar": {
+      "patch": {
+        "tags": ["Marca"],
+        "summary": "Inativa uma marca (exclusão lógica)",
+        "security": [{ "jwt": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Inativada com sucesso" }, "404": { "description": "Não encontrada" } }
+      }
     }
   },
   "components": {
@@ -124,6 +178,19 @@
           "cpf": { "type": "string", "example": "12345678900" },
           "dataNascimento": { "type": "string", "example": "1990-01-15" },
           "login": { "type": "string", "example": "joao.silva" }
+        }
+      },
+      "marca": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string", "example": "Coca-Cola" }
+        }
+      },
+      "marcaAtualizar": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "nome": { "type": "string", "example": "Coca-Cola" }
         }
       }
     },
