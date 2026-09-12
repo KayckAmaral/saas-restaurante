@@ -76,7 +76,7 @@ export default function PessoaJuridica() {
             nome,
             telefone: telefoneRef.current.value.trim() || null,
             endereco: enderecoRef.current.value.trim() || null,
-            cnpj,
+            cnpj: cnpj.replace(/\D/g, ''),
             razaoSocial
         };
 

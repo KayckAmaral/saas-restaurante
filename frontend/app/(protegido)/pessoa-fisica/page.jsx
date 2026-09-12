@@ -103,7 +103,7 @@ export default function PessoaFisica() {
             nome,
             telefone: telefoneRef.current.value.trim() || null,
             endereco: enderecoRef.current.value.trim() || null,
-            cpf: cpfRef.current.value.trim() || null,
+            cpf: cpfRef.current.value.trim().replace(/\D/g, '') || null,
             dataNascimento,
             login: loginRef.current.value.trim() || null,
             idPessoaJuridica
