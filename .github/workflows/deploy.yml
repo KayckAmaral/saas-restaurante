@@ -5,15 +5,67 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
+  build-frontend:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Create .env.local para o build
+        working-directory: frontend
+        run: echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" > .env.local
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+      - name: Empacotar build
+        working-directory: frontend
+        run: tar czf ../frontend-build.tar.gz .next public package.json package-lock.json next.config.mjs
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend-build.tar.gz
+          retention-days: 1
+
+  deploy:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+
+      - name: Enviar build pra VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 137.131.159.192
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "frontend-build.tar.gz"
+          target: "~/deploy-tmp"
+
       - name: Deploy na VM via SSH
         uses: appleboy/ssh-action@v1
         with:
           host: 137.131.159.192
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command_timeout: 20m
           script: |
             set -e
 
@@ -29,9 +81,11 @@ jobs:
 
             if [ -f frontend/package.json ]; then
               cd frontend
-              npm install
-              export NODE_OPTIONS='--max-old-space-size=512'
-              npm run build
+              rm -rf .next
+              tar xzf ~/deploy-tmp/frontend-build.tar.gz -C .
+              npm ci --omit=dev
               pm2 restart saas-frontend || pm2 start npm --name saas-frontend -- start
               cd ..
             fi
+
+            rm -rf ~/deploy-tmp
