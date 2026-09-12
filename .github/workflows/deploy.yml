@@ -32,7 +32,7 @@ jobs:
 
       - name: Empacotar build
         working-directory: frontend
-        run: tar czf ../frontend-build.tar.gz .next public package.json package-lock.json next.config.mjs
+        run: tar czf ../frontend-build.tar.gz .next package.json package-lock.json next.config.mjs $(test -d public && echo public)
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
