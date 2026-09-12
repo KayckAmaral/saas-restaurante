@@ -51,12 +51,49 @@ export default function PessoaFisica() {
         return data ? String(data).slice(0, 10) : '';
     }
 
+    function formatarCpf(valor) {
+        return valor
+            .replace(/\D/g, '')
+            .slice(0, 11)
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+
+    function formatarTelefone(valor) {
+        const digitos = valor.replace(/\D/g, '').slice(0, 11);
+        if (digitos.length <= 10) {
+            return digitos
+                .replace(/(\d{2})(\d)/, '($1) $2')
+                .replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        return digitos
+            .replace(/(\d{2})(\d)/, '($1) $2')
+            .replace(/(\d{5})(\d)/, '$1-$2');
+    }
+
+    function dataLocalHoje() {
+        const agora = new Date();
+        const ano = agora.getFullYear();
+        const mes = String(agora.getMonth() + 1).padStart(2, '0');
+        const dia = String(agora.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    const hoje = dataLocalHoje();
+
     async function salvar(e) {
         e.preventDefault();
 
         const nome = nomeRef.current.value.trim();
         if (!nome) {
             toast.error('O nome é obrigatório.');
+            return;
+        }
+
+        const dataNascimento = dataNascimentoRef.current.value || null;
+        if (dataNascimento && dataNascimento > hoje) {
+            toast.error('A data de nascimento não pode ser no futuro.');
             return;
         }
 
@@ -67,7 +104,7 @@ export default function PessoaFisica() {
             telefone: telefoneRef.current.value.trim() || null,
             endereco: enderecoRef.current.value.trim() || null,
             cpf: cpfRef.current.value.trim() || null,
-            dataNascimento: dataNascimentoRef.current.value || null,
+            dataNascimento,
             login: loginRef.current.value.trim() || null,
             idPessoaJuridica
         };
@@ -109,9 +146,9 @@ export default function PessoaFisica() {
     function editar(pessoa) {
         setEditandoId(pessoa.id);
         nomeRef.current.value = pessoa.nome || '';
-        telefoneRef.current.value = pessoa.telefone || '';
+        telefoneRef.current.value = formatarTelefone(pessoa.telefone || '');
         enderecoRef.current.value = pessoa.endereco || '';
-        cpfRef.current.value = pessoa.cpf || '';
+        cpfRef.current.value = formatarCpf(pessoa.cpf || '');
         dataNascimentoRef.current.value = formatarData(pessoa.dataNascimento);
         loginRef.current.value = pessoa.login || '';
         idPessoaJuridicaRef.current.value = pessoa.idPessoaJuridica || '';
@@ -160,15 +197,29 @@ export default function PessoaFisica() {
                     </div>
                     <div style={styles.field}>
                         <label style={styles.label}>CPF</label>
-                        <input ref={cpfRef} type="text" placeholder="000.000.000-00" style={styles.input} />
+                        <input
+                            ref={cpfRef}
+                            type="text"
+                            placeholder="000.000.000-00"
+                            maxLength={14}
+                            onChange={e => { e.target.value = formatarCpf(e.target.value); }}
+                            style={styles.input}
+                        />
                     </div>
                     <div style={styles.field}>
                         <label style={styles.label}>Telefone</label>
-                        <input ref={telefoneRef} type="text" placeholder="(44) 99999-9999" style={styles.input} />
+                        <input
+                            ref={telefoneRef}
+                            type="text"
+                            placeholder="(44) 99999-9999"
+                            maxLength={15}
+                            onChange={e => { e.target.value = formatarTelefone(e.target.value); }}
+                            style={styles.input}
+                        />
                     </div>
                     <div style={styles.field}>
                         <label style={styles.label}>Data de nascimento</label>
-                        <input ref={dataNascimentoRef} type="date" style={styles.input} />
+                        <input ref={dataNascimentoRef} type="date" max={hoje} style={styles.input} />
                     </div>
                     <div style={{ ...styles.field, gridColumn: '1 / -1' }}>
                         <label style={styles.label}>Endereço</label>

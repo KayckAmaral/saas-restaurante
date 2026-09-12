@@ -38,6 +38,28 @@ export default function PessoaJuridica() {
         setEmpresas(data || []);
     }
 
+    function formatarCnpj(valor) {
+        return valor
+            .replace(/\D/g, '')
+            .slice(0, 14)
+            .replace(/(\d{2})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1/$2')
+            .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+    }
+
+    function formatarTelefone(valor) {
+        const digitos = valor.replace(/\D/g, '').slice(0, 11);
+        if (digitos.length <= 10) {
+            return digitos
+                .replace(/(\d{2})(\d)/, '($1) $2')
+                .replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        return digitos
+            .replace(/(\d{2})(\d)/, '($1) $2')
+            .replace(/(\d{5})(\d)/, '$1-$2');
+    }
+
     async function salvar(e) {
         e.preventDefault();
 
@@ -91,9 +113,9 @@ export default function PessoaJuridica() {
     function editar(empresa) {
         setEditandoId(empresa.id);
         nomeRef.current.value = empresa.nome || '';
-        telefoneRef.current.value = empresa.telefone || '';
+        telefoneRef.current.value = formatarTelefone(empresa.telefone || '');
         enderecoRef.current.value = empresa.endereco || '';
-        cnpjRef.current.value = empresa.cnpj || '';
+        cnpjRef.current.value = formatarCnpj(empresa.cnpj || '');
         razaoSocialRef.current.value = empresa.razaoSocial || '';
         nomeRef.current.focus();
     }
@@ -144,11 +166,25 @@ export default function PessoaJuridica() {
                     </div>
                     <div style={styles.field}>
                         <label style={styles.label}>CNPJ</label>
-                        <input ref={cnpjRef} type="text" placeholder="00.000.000/0000-00" style={styles.input} />
+                        <input
+                            ref={cnpjRef}
+                            type="text"
+                            placeholder="00.000.000/0000-00"
+                            maxLength={18}
+                            onChange={e => { e.target.value = formatarCnpj(e.target.value); }}
+                            style={styles.input}
+                        />
                     </div>
                     <div style={styles.field}>
                         <label style={styles.label}>Telefone</label>
-                        <input ref={telefoneRef} type="text" placeholder="(44) 3333-4444" style={styles.input} />
+                        <input
+                            ref={telefoneRef}
+                            type="text"
+                            placeholder="(44) 3333-4444"
+                            maxLength={15}
+                            onChange={e => { e.target.value = formatarTelefone(e.target.value); }}
+                            style={styles.input}
+                        />
                     </div>
                     <div style={{ ...styles.field, gridColumn: '1 / -1' }}>
                         <label style={styles.label}>Endereço</label>
