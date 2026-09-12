@@ -74,7 +74,7 @@ jobs:
 
             if [ -f backend/package.json ]; then
               cd backend
-              npm install --production
+              npm ci --omit=dev
               pm2 restart saas-backend || pm2 start server.js --name saas-backend
               cd ..
             fi
