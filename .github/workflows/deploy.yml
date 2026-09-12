@@ -30,9 +30,13 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Remover devDependencies do node_modules
+        working-directory: frontend
+        run: npm prune --omit=dev
+
       - name: Empacotar build
         working-directory: frontend
-        run: tar czf ../frontend-build.tar.gz .next package.json package-lock.json next.config.mjs $(test -d public && echo public)
+        run: tar czf ../frontend-build.tar.gz .next node_modules package.json package-lock.json next.config.mjs $(test -d public && echo public)
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -81,9 +85,8 @@ jobs:
 
             if [ -f frontend/package.json ]; then
               cd frontend
-              rm -rf .next
+              rm -rf .next node_modules
               tar xzf ~/deploy-tmp/frontend-build.tar.gz -C .
-              npm ci --omit=dev
               pm2 restart saas-frontend || pm2 start npm --name saas-frontend -- start
               cd ..
             fi
